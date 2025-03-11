@@ -5,10 +5,19 @@ public class MenuSwitcher : MonoBehaviour
     public GameObject LR_Menu;
     public GameObject Enviroment_Manager;
     public GameObject Create_Enviroment;
+
+    public SpaceGarden SpaceGarden;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        ActivateLRmenu();
+        if (SpaceGarden.userLoggedIn)
+        {
+            ActivateEnviromentMan();
+        }
+        else
+        {
+            ActivateLRmenu();
+        }
     }
 
     public void ActivateEnviromentMan()
@@ -17,6 +26,7 @@ public class MenuSwitcher : MonoBehaviour
         LR_Menu.SetActive(false);
 
         Enviroment_Manager.SetActive(true);
+        SpaceGarden.ReadEnvironment2Ds();
     }
 
     public void ActivateCreateEnv()

@@ -10,7 +10,10 @@ public class LoginHandler : MonoBehaviour
     public TextMeshProUGUI Message;
 
     public SpaceGarden spaceGarden;
-
+    void Start()
+    {
+        Message.text = "";
+    }
     public void test()
     {
         SceneManager.LoadScene(1);

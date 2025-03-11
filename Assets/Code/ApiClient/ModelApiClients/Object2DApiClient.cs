@@ -9,7 +9,7 @@ public class Object2DApiClient : MonoBehaviour
 
     public async Awaitable<IWebRequestReponse> ReadObject2Ds(string environmentId)
     {
-        string route = "/environments/" + environmentId + "/objects";
+        string route = "/object2ds/" + environmentId;
 
         IWebRequestReponse webRequestResponse = await webClient.SendGetRequest(route);
         return ParseObject2DListResponse(webRequestResponse);
@@ -17,7 +17,7 @@ public class Object2DApiClient : MonoBehaviour
 
     public async Awaitable<IWebRequestReponse> CreateObject2D(Object2D object2D)
     {
-        string route = "/environments/" + object2D.environmentId + "/objects";
+        string route = "/object2ds";
         string data = JsonUtility.ToJson(object2D);
 
         IWebRequestReponse webRequestResponse = await webClient.SendPostRequest(route, data);
@@ -26,7 +26,7 @@ public class Object2DApiClient : MonoBehaviour
 
     public async Awaitable<IWebRequestReponse> UpdateObject2D(Object2D object2D)
     {
-        string route = "/environments/" + object2D.environmentId + "/objects/" + object2D.id;
+        string route = "/object2ds/" + object2D.id;
         string data = JsonUtility.ToJson(object2D);
 
         return await webClient.SendPutRequest(route, data);

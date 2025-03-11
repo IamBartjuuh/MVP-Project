@@ -1,22 +1,28 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class SpaceGarden : MonoBehaviour
 {
     [Header("Test data")]
     //public User user;
     //public Environment2D environment2D;
-    public Object2D object2D;
+    //public Object2D object2D;
 
     [Header("Dependencies")]
     public UserApiClient userApiClient;
     public Environment2DApiClient enviroment2DApiClient;
     public Object2DApiClient object2DApiClient;
 
+    [Header("Login/Register")]
     public MenuSwitcher menuSwitcher;
     public LoginHandler loginHandler;
+    public bool userLoggedIn = false;
 
+    [Header("Enviroment")]
+    public EnvironmentHandler environmentHandler;
+    public string CurrentEnviromentId;
     public static SpaceGarden instance { get; private set; }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -74,8 +80,10 @@ public class SpaceGarden : MonoBehaviour
         {
             case WebRequestData<string> dataResponse:
                 Debug.Log("Login succes!");
+                userLoggedIn = true;
                 // TODO: Todo handle succes scenario.
                 menuSwitcher.ActivateEnviromentMan();
+                loginHandler.Message.text = "";
                 break;
             case WebRequestError errorResponse:
                 string errorMessage = errorResponse.ErrorMessage;
@@ -113,7 +121,8 @@ public class SpaceGarden : MonoBehaviour
             case WebRequestData<List<Environment2D>> dataResponse:
                 List<Environment2D> environment2Ds = dataResponse.Data;
                 Debug.Log("List of environment2Ds: ");
-                environment2Ds.ForEach(environment2D => Debug.Log(environment2D.id));
+                //environment2Ds.ForEach(environment2D => Debug.Log(environment2D.id));
+                environmentHandler.SetEnvironments(environment2Ds);
                 // TODO: Handle succes scenario.
                 break;
             case WebRequestError errorResponse:
@@ -134,14 +143,26 @@ public class SpaceGarden : MonoBehaviour
         switch (webRequestResponse)
         {
             case WebRequestData<Environment2D> dataResponse:
-                attempt.id = dataResponse.Data.id;
                 // TODO: Handle succes scenario.
-
+                environmentHandler.Message.text = "Environment created!";
                 break;
             case WebRequestError errorResponse:
                 string errorMessage = errorResponse.ErrorMessage;
                 Debug.Log("Create environment2D error: " + errorMessage);
                 // TODO: Handle error scenario. Show the errormessage to the user.
+                string httpcode = errorMessage.Substring(9, 3);
+                switch (httpcode)
+                {
+                    case "400":
+                        environmentHandler.Error("Name must be 1 to 25 character long.");
+                        break;
+                    case "500":
+                        environmentHandler.Error("Server did not respond try again later.");
+                        break;
+                    default:
+                        environmentHandler.Error("Unexpected error. Try again.");
+                        break;
+                }
                 break;
             default:
                 throw new NotImplementedException("No implementation for webRequestResponse of class: " + webRequestResponse.GetType());
@@ -149,15 +170,17 @@ public class SpaceGarden : MonoBehaviour
     }
 
     [ContextMenu("Environment2D/Delete")]
-    public async void DeleteEnvironment2D(Environment2D attempt)
+    public async void DeleteEnvironment2D(string id)
     {
-        IWebRequestReponse webRequestResponse = await enviroment2DApiClient.DeleteEnvironment(attempt.id);
+        IWebRequestReponse webRequestResponse = await enviroment2DApiClient.DeleteEnvironment(id);
 
         switch (webRequestResponse)
         {
             case WebRequestData<string> dataResponse:
                 string responseData = dataResponse.Data;
                 // TODO: Handle succes scenario.
+                Debug.Log("Delete environment succes: " + responseData);
+                ReadEnvironment2Ds();
                 break;
             case WebRequestError errorResponse:
                 string errorMessage = errorResponse.ErrorMessage;
@@ -174,9 +197,9 @@ public class SpaceGarden : MonoBehaviour
     #region Object2D
 
     [ContextMenu("Object2D/Read all")]
-    public async void ReadObject2Ds()
+    public async void ReadObject2Ds(string environmentId, MenuPanel menuPanel)
     {
-        IWebRequestReponse webRequestResponse = await object2DApiClient.ReadObject2Ds(object2D.environmentId);
+        IWebRequestReponse webRequestResponse = await object2DApiClient.ReadObject2Ds(environmentId);
 
         switch (webRequestResponse)
         {
@@ -184,7 +207,7 @@ public class SpaceGarden : MonoBehaviour
                 List<Object2D> object2Ds = dataResponse.Data;
                 Debug.Log("List of object2Ds: " + object2Ds);
                 object2Ds.ForEach(object2D => Debug.Log(object2D.id));
-                // TODO: Succes scenario. Show the enviroments in the UI
+                object2Ds.ForEach(object2D => menuPanel.CreateGameObjectFromDataBase(object2D));
                 break;
             case WebRequestError errorResponse:
                 string errorMessage = errorResponse.ErrorMessage;
@@ -197,7 +220,7 @@ public class SpaceGarden : MonoBehaviour
     }
 
     [ContextMenu("Object2D/Create")]
-    public async void CreateObject2D()
+    public async void CreateObject2D(Object2D object2D, Instance instance)
     {
         IWebRequestReponse webRequestResponse = await object2DApiClient.CreateObject2D(object2D);
 
@@ -205,6 +228,8 @@ public class SpaceGarden : MonoBehaviour
         {
             case WebRequestData<Object2D> dataResponse:
                 object2D.id = dataResponse.Data.id;
+                instance.object2D.id = object2D.id;
+                //Debug.Log(dataResponse.Data.id);
                 // TODO: Handle succes scenario.
                 break;
             case WebRequestError errorResponse:
@@ -218,15 +243,15 @@ public class SpaceGarden : MonoBehaviour
     }
 
     [ContextMenu("Object2D/Update")]
-    public async void UpdateObject2D()
+    public async void UpdateObject2D(Object2D object2D, Instance instance)
     {
         IWebRequestReponse webRequestResponse = await object2DApiClient.UpdateObject2D(object2D);
 
         switch (webRequestResponse)
         {
             case WebRequestData<string> dataResponse:
-                string responseData = dataResponse.Data;
-                 //TODO: Handle succes scenario.
+                Debug.Log(dataResponse.Data);
+                //TODO: Handle succes scenario.
                 break;
             case WebRequestError errorResponse:
                 string errorMessage = errorResponse.ErrorMessage;

@@ -147,5 +147,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7191a86df49376f4a8966eb2e6ba9567, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  generalLogic: {fileID: 0}
+  spaceGarden: {fileID: 0}
   isDragging: 0
-  menuPanel: {fileID: 0}
+  isDropped: 0
+  object2D:
+    id: 
+    environmentId: 
+    prefabId: 4
+    positionX: 0
+    positionY: 0
+    scaleX: 0
+    scaleY: 0
+    rotationZ: 0
+    sortingLayer: 0
