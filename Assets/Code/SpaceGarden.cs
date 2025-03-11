@@ -263,6 +263,28 @@ public class SpaceGarden : MonoBehaviour
         }
     }
 
+    [ContextMenu("Object2D/Delete")]
+    public async void DeleteObject2D(string id, Instance instance)
+    {
+        IWebRequestReponse webRequestResponse = await object2DApiClient.DeleteObject2D(id);
+
+        switch (webRequestResponse)
+        {
+            case WebRequestData<string> dataResponse:
+                string responseData = dataResponse.Data;
+                // TODO: Handle succes scenario.
+                Debug.Log("Delete object2D succes!");
+                instance.DestroyGameObject();
+                break;
+            case WebRequestError errorResponse:
+                string errorMessage = errorResponse.ErrorMessage;
+                Debug.Log("Delete object2D error: " + errorMessage);
+                // TODO: Handle error scenario. Show the errormessage to the user.
+                break;
+            default:
+                throw new NotImplementedException("No implementation for webRequestResponse of class: " + webRequestResponse.GetType());
+        }
+    }
     #endregion
 
 }

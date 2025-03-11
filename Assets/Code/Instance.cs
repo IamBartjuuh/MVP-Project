@@ -36,14 +36,26 @@ public class Instance : MonoBehaviour // IBeginDragHandler, IDragHandler, IEndDr
         generalLogic.HideMenu(!isDragging);
 
     }
+    private void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            spaceGarden.DeleteObject2D(object2D.id, gameObject.GetComponent<Instance>());
+        }
+    }
 
     void Update()
     {
+
         if (isDragging)
         {
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             transform.position = new Vector3(mousePosition.x, mousePosition.y, 0);
         } 
 
+    }
+    public void DestroyGameObject()
+    {
+        Destroy(gameObject);
     }
 }
