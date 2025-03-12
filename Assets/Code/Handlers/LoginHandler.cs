@@ -12,11 +12,8 @@ public class LoginHandler : MonoBehaviour
     public SpaceGarden spaceGarden;
     void Start()
     {
+        spaceGarden = GameObject.FindGameObjectWithTag("GameAPI").GetComponent<SpaceGarden>();
         Message.text = "";
-    }
-    public void test()
-    {
-        SceneManager.LoadScene(1);
     }
     public void Error(string error)
     {

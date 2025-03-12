@@ -18,6 +18,8 @@ public class EnvironmentHandler : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        spaceGarden = GameObject.FindGameObjectWithTag("GameAPI").GetComponent<SpaceGarden>();
+        sceneSwitcher = GameObject.FindGameObjectWithTag("GameAPI").GetComponent<SceneSwitcher>();
         Message.text = "";
     }
 

@@ -39,6 +39,15 @@ public class SpaceGarden : MonoBehaviour
         }
         DontDestroyOnLoad(this);
     }
+
+    public void FindAllScripts()
+    {
+        menuSwitcher = GameObject.FindGameObjectWithTag("Handlers").GetComponent<MenuSwitcher>();
+        loginHandler = GameObject.FindGameObjectWithTag("Handlers").GetComponent<LoginHandler>();
+        environmentHandler = GameObject.FindGameObjectWithTag("Handlers").GetComponent<EnvironmentHandler>();
+        Debug.Log("Trying to find all scripts");
+    }
+
     #region Login
     public async void Register(User user)
     {
@@ -120,7 +129,7 @@ public class SpaceGarden : MonoBehaviour
         {
             case WebRequestData<List<Environment2D>> dataResponse:
                 List<Environment2D> environment2Ds = dataResponse.Data;
-                Debug.Log("List of environment2Ds: ");
+                Debug.Log("List of environment2Ds: " + environment2Ds);
                 //environment2Ds.ForEach(environment2D => Debug.Log(environment2D.id));
                 environmentHandler.SetEnvironments(environment2Ds);
                 // TODO: Handle succes scenario.
@@ -145,6 +154,8 @@ public class SpaceGarden : MonoBehaviour
             case WebRequestData<Environment2D> dataResponse:
                 // TODO: Handle succes scenario.
                 environmentHandler.Message.text = "Environment created!";
+                environmentHandler.Name.text = "";
+                environmentHandler.Length.text = "";
                 break;
             case WebRequestError errorResponse:
                 string errorMessage = errorResponse.ErrorMessage;

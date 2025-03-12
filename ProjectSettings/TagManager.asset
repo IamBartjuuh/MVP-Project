@@ -6,8 +6,10 @@ TagManager:
   tags:
   - GameAPI
   - MenuHandler
-  - LoginHandler
   - GeneralLogic
+  - Handlers
+  - LoginHandler
+  - EnviromentHandler
   layers:
   - Default
   - TransparentFX

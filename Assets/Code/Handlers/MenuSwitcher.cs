@@ -10,14 +10,17 @@ public class MenuSwitcher : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        SpaceGarden = GameObject.FindGameObjectWithTag("GameAPI").GetComponent<SpaceGarden>();
         if (SpaceGarden.userLoggedIn)
         {
             ActivateEnviromentMan();
+            SpaceGarden.FindAllScripts();
         }
         else
         {
             ActivateLRmenu();
         }
+        
     }
 
     public void ActivateEnviromentMan()
@@ -39,9 +42,9 @@ public class MenuSwitcher : MonoBehaviour
 
     public void ActivateLRmenu()
     {
-        Enviroment_Manager.SetActive(false);
-        Create_Enviroment.SetActive(false);
+            Enviroment_Manager.SetActive(false);
+            Create_Enviroment.SetActive(false);
 
-        LR_Menu.SetActive(true);
+            LR_Menu.SetActive(true);
     }
 }
